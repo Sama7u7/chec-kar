@@ -20,13 +20,13 @@
     <body class="bg-background">
 
         <main>
-        <div class="grid grid-cols-12 gap-4 pl-2 pr-2 pt-2">
-        <div class="rounded-sm col-span-2 bg-primary text-white p-4">Columna 1</div>
-        <div class="rounded-sm col-span-8 bg-primary place-content-center text-white p-4">
-            @yield('content')
-        </div>
-        <div class="rounded-sm col-span-2 bg-primary text-white p-4">Columna 3</div>
-    </div>
+
+            <div class="grid grid-cols-12 gap-4 pl-2 pr-2 pt-2">
+                <div class="rounded-sm col-span-1 bg-primary text-white p-4">Columna 1</div>
+                <div class="rounded-sm col-span-11 bg-primary place-content-center text-white p-4">
+                    @yield('content')
+                </div>
+            </div>
         </main>
 
         <footer>
