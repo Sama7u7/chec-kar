@@ -17,9 +17,20 @@ class AuthController extends Controller
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-            return redirect()->intended('admin'); // Redirige al dashboard
+            $user = Auth::user();
+            if ($user->role === 'admin') {
+            // Si es admin, lo mandamos al dashboard de admin.
+            return redirect()->intended('admin');
+            }
         }
-
+        if (Auth::attempt($credentials)) {
+            $request->session()->regenerate();
+            $user = Auth::user();
+            if ($user->role === 'user') {
+            // Si es admin, lo mandamos al dashboard de admin.
+            return redirect()->intended('user');
+            }
+        }
         return back()->withErrors([
             'email' => 'Las credenciales no son correctas.',
         ]);
@@ -27,10 +38,12 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
-        Auth::logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
+        Auth::logout(); // Cierra la sesión del usuario autenticado
 
-        return redirect()->route('login');
+        $request->session()->invalidate(); // Invalida la sesión existente
+
+        $request->session()->regenerateToken(); // Genera un nuevo token CSRF para la sesión
+
+        return redirect('/'); // Redirige al usuario a la página de inicio de sesión
     }
 }
