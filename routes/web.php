@@ -10,9 +10,12 @@ Route::get('/', function () {
 Route::get('/test', function () {
     return view('testview');
 });
-Route::get('/admin', function () {
-    return view('admin');
-});
+//Rutas segun roles
+//Rutas para admins
+Route::get('/admin', function () {  return view ('admin');})->middleware('auth:admin');
+
+//termina ruta para admins
+
 Route::get('/login', function () {return view('login');});
 Route::post('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
