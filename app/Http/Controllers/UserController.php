@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Product;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
@@ -34,6 +35,29 @@ class UserController extends Controller
         // Redirigir a la página de usuarios con un mensaje de éxito
         return redirect()->route('usuarios.create')->with('success', 'Usuario creado exitosamente.');
     }
+     // Manejar el envío del formulario y crear el produccto con codigo de barras
+        public function storeProducts(Request $request)
+        {
+            // 1. Validar
+            $validated = $request->validate([
+                'barcode'      => 'required|string|unique:products,barcode',
+                'product-name' => 'required|string|max:255',
+                'quantity'     => 'required|integer|min:0',
+                'price'        => 'required|numeric|min:0',
+                'description'  => 'nullable|string|max:255',
+            ]);
+
+            // 2. Crear (Usando Product en singular y mapeando bien los datos)
+            Product::create([
+                'barcode'     => $validated['barcode'],
+                'name'        => $validated['product-name'],
+                'quantity'    => $validated['quantity'],
+                'price'       => $validated['price'],
+                'description' => $validated['description'] ?? null,
+            ]);
+
+        return redirect()->back()->with('success', 'Producto creado exitosamente.');
+    }
     // Función para listar los usuarios
     public function index()
     {
@@ -43,41 +67,41 @@ class UserController extends Controller
 
      // Muestra el formulario para editar un usuario
      public function edit($id)
-     {
+    {
          $usuario = User::findOrFail($id); // Busca el usuario por ID
-         return view('admin.editarUsuario', compact('usuario'));
+        return view('admin.editarUsuario', compact('usuario'));
      }
 
      // Actualiza los datos de un usuario
-     public function update(Request $request, $id)
-     {
-         $request->validate([
-             'name' => 'required|string|max:255',
-             'email' => 'required|email|unique:users,email,' . $id,
-         ]);
+        public function update(Request $request, $id)
+        {
+            $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . $id,
+        ]);
 
-         $usuario = User::findOrFail($id);
+        $usuario = User::findOrFail($id);
 
          // Si se envía una contraseña no vacía, actualízala
-         if ($request->filled('password')) {
-             $request->validate([
-                 'password' => 'required|string|min:8|confirmed',
-             ]);
-             $usuario->password = bcrypt($request->input('password'));
-         }
+        if ($request->filled('password')) {
+            $request->validate([
+                'password' => 'required|string|min:8|confirmed',
+            ]);
+            $usuario->password = bcrypt($request->input('password'));
+        }
 
          // Actualizar otros campos
-         $usuario->update($request->except('password'));
+        $usuario->update($request->except('password'));
 
-         return redirect()->route('usuarios.index')->with('success', 'Usuario actualizado con éxito.');
-     }
+        return redirect()->route('usuarios.index')->with('success', 'Usuario actualizado con éxito.');
+        }
 
 
      // Elimina un usuario
      public function destroy($id)
      {
-         $usuario = User::findOrFail($id);
-         $usuario->delete();
+        $usuario = User::findOrFail($id);
+        $usuario->delete();
 
          return redirect()->route('usuarios.index')->with('success', 'Usuario eliminado con éxito.');
      }
