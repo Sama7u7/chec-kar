@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\AuthController;
 
 Route::get('/', function () {
@@ -14,7 +15,7 @@ Route::get('/test', function () {
 //Rutas para admins
 Route::get('/admin', function () {  return view ('admin');})->middleware('auth:admin')->name('admin');
 Route::get('/admin/scan', function () {return view('product');})->name('products.create');
-Route::post('/admin/scan', [UserController::class, 'storeProducts'])->name('products.store');
+Route::post('/admin/scan', [ProductController::class, 'storeProducts'])->name('products.store');
 
 //termina rutas para admins
 Route::get('/user', function () {  return view ('user');})->middleware('auth:user');
